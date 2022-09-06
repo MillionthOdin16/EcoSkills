@@ -32,8 +32,8 @@ class SkillDisplayListener(
                 var string = this.plugin.configYml.getFormattedString("skills.progress.action-bar.format")
                 val currentXp = player.getSkillProgress(skill)
                 string = string.replace("%skill%", skill.name)
-                string = string.replace("%current_level%, NumberUtils.format(currentLevel))
-                string = string.replace("%current_xp%", NumberUtils.format(player.getSkillProgress(skill)))
+                string = string.replace("%current_level%", NumberUtils.format(currentLevel))
+                string = string.replace("%current_xp%", NumberUtils.format(currentXp))
                 val nextLevel = skill.getExpForLevel(player.getSkillLevel(skill) + 1).toDouble()
                 val nextLevelMessage =
                     if (nextLevel >= 2_000_000_000) plugin.langYml.getString("infinity") else NumberUtils.format(
@@ -55,7 +55,7 @@ class SkillDisplayListener(
                 val currentXp = player.getSkillProgress(skill)
                 val currentLevel = player.getSkillLevel(skill)
                 string = string.replace("%skill%", skill.name)
-                string = string.replace("%current_level%, NumberUtils.format(currentLevel))
+                string = string.replace("%current_level%", NumberUtils.format(currentLevel))
                 string = string.replace("%current_xp%", NumberUtils.format(currentXp))
                 val nextLevel = skill.getExpForLevel(player.getSkillLevel(skill) + 1).toDouble()
                 val nextLevelMessage =
