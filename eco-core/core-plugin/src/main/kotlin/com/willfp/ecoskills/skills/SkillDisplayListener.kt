@@ -30,9 +30,7 @@ class SkillDisplayListener(
         plugin.scheduler.run {
             if (this.plugin.configYml.getBool("skills.progress.action-bar.enabled")) {
                 var string = this.plugin.configYml.getFormattedString("skills.progress.action-bar.format")
-                val currentXp = player.getSkillProgress(skill)
                 string = string.replace("%skill%", skill.name)
-                string = string.replace("%current_level%, NumberUtils.format(currentLevel))
                 string = string.replace("%current_xp%", NumberUtils.format(player.getSkillProgress(skill)))
                 val nextLevel = skill.getExpForLevel(player.getSkillLevel(skill) + 1).toDouble()
                 val nextLevelMessage =
@@ -53,9 +51,7 @@ class SkillDisplayListener(
             if (this.plugin.configYml.getBool("skills.progress.boss-bar.enabled")) {
                 var string = this.plugin.configYml.getFormattedString("skills.progress.boss-bar.format")
                 val currentXp = player.getSkillProgress(skill)
-                val currentLevel = player.getSkillLevel(skill)
                 string = string.replace("%skill%", skill.name)
-                string = string.replace("%current_level%, NumberUtils.format(currentLevel))
                 string = string.replace("%current_xp%", NumberUtils.format(currentXp))
                 val nextLevel = skill.getExpForLevel(player.getSkillLevel(skill) + 1).toDouble()
                 val nextLevelMessage =
