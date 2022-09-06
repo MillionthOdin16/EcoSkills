@@ -4,8 +4,11 @@ import com.willfp.eco.core.EcoPlugin
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.ecoskills.effects.Effect
 import com.willfp.ecoskills.effects.Effects
+import com.willfp.ecoskills.stats.Stat
+import com.willfp.ecoskills.stats.Stats
 import com.willfp.ecoskills.getSkillLevel
 import com.willfp.ecoskills.setEffectLevel
+import com.willfp.ecoskills.setStatLevel
 import com.willfp.ecoskills.skills.Skills
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
@@ -38,12 +41,16 @@ class CommandRecount(plugin: EcoPlugin): Subcommand(
         }
 
         val effect = Effects.getByID(args[1].lowercase())
+        val stat = Stats.getByID(args[1].lowercase())
 
-        if (effect == null) {
+        if (effect == null && stat == null) {
             if (args[1].lowercase().contentEquals("all")) {
                 var total = 0
                 for (ceffect in Effects.values()) {
                     total+=recount(player, ceffect)
+                }
+                for (cstat in Stats.values()) {
+                    total+=recount(player, cstat)
                 }
                 sender.sendMessage(
                     plugin.langYml.getMessage("recounted-player")
@@ -56,12 +63,23 @@ class CommandRecount(plugin: EcoPlugin): Subcommand(
                 return
             }
         } else {
-            sender.sendMessage(
-                plugin.langYml.getMessage("recounted-player")
-                    .replace("%player%", player.displayName)
-                    .replace("%effect%", effect.id)
-                    .replace("%level%", recount(player, effect).toString())
-            )
+            if (stat == null && effect != null) {
+                sender.sendMessage(
+                    plugin.langYml.getMessage("recounted-player")
+                        .replace("%player%", player.displayName)
+                        .replace("%effect%", effect.id)
+                        .replace("%level%", recount(player, effect).toString())
+                )
+            }
+            if (effect == null && stat != null) {
+                sender.sendMessage(
+                    plugin.langYml.getMessage("recounted-player")
+                        .replace("%player%", player.displayName)
+                        .replace("%effect%", stat.id)
+                        .replace("%level%", recount(player, stat).toString())
+                )
+            }
+            
         }
     }
 
@@ -82,6 +100,11 @@ class CommandRecount(plugin: EcoPlugin): Subcommand(
             StringUtil.copyPartialMatches(
                 args[1],
                 Effects.values().map { effect -> effect.id }.toMutableList(),
+                completions
+            )
+            StringUtil.copyPartialMatches(
+                args[1],
+                Stats.values().map { stat -> stat.id }.toMutableList(),
                 completions
             )
             return completions
@@ -109,6 +132,28 @@ class CommandRecount(plugin: EcoPlugin): Subcommand(
             total+=ofSkill
         }
         player.setEffectLevel(effect, total)
+        return total
+    }
+
+    private fun recount(player: Player, stat: Stat): Int {
+        var total = 0
+        for (skill in Skills.values()) {
+
+            var ofSkill = 0
+            val range = 1..player.getSkillLevel(skill)
+
+            for (reward in skill.getLevelUpRewards()) {
+                if (reward.obj is Stat && reward.obj == stat) {
+                    for (i in range) {
+                        val obj = reward.obj
+                        val toGive = skill.getLevelUpReward(obj, i)
+                        ofSkill+=toGive
+                    }
+                }
+            }
+            total+=ofSkill
+        }
+        player.setStatLevel(stat, total)
         return total
     }
 
