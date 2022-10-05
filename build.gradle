@@ -34,6 +34,14 @@ allprojects {
         maven { url 'https://repo.codemc.io/repository/maven-public/' }
         maven { url 'https://repo.dmulloy2.net/repository/public/' }
         maven { url 'https://repo.essentialsx.net/releases/' }
+        maven {
+            isAllowInsecureProtocol = true
+            url = uri("http://node2.bradarr.com:3801/releases")
+            credentials {
+                username = System.getenv("BRADARR_USER")
+                password = System.getenv("BRADARR_PASS")
+            }
+        }
     }
 
     jar {
